@@ -26,10 +26,10 @@ Operation completed 40 scans.
 
 ### TODOs
 
-[] fix bug where dirs with spaces bor
-[x] write a failed rls log
-[] proper args handling
-[/] scrolling output yet with progressbar working(?)
-[] eliminate bc, awk perhaps?
-[] show percentage completion in margin #progressbar
-[] add maxdepth param via cmdline
+* [] fix bug where dirs with spaces bor
+* [x] write a failed rls log
+* [] proper args handling
+* [/] scrolling output yet with progressbar working(?)
+* [] eliminate bc, awk perhaps?
+* [] show percentage completion in margin #progressbar
+* [] add maxdepth param via cmdline
