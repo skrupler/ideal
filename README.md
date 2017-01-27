@@ -27,7 +27,7 @@ Operation completed 40 scans.
 ### TODOs
 
 * [] fix bug where dirs with spaces bor
-* [] write a failed rls log
+* [x] write a failed rls log
 * [] proper args handling
 * [/] scrolling output yet with progressbar working(?)
 * [] eliminate bc, awk perhaps?

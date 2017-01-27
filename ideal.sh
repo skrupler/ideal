@@ -15,6 +15,7 @@
 #IFS=$(echo -en "\n\b")
 FCOLOR="\033[31;1m"
 PCOLOR="\033[32;1m"
+BCOLOR="\033[34;1m"
 CEND="\033[0m"
 
 function help(){
@@ -43,32 +44,39 @@ function check_if_trail(){
 
 function make_list_of_failed(){
 
-	SCRIPTPATH=$(realpath -s $0)
+	# writes all failed to failed.log
+	SCRIPT=$(realpath -s $0)
+  	SCRIPTPATH=$(dirname $SCRIPT)
+	LOGPATH="$SCRIPTPATH/failed.log"
+	#echo "Making a failed list."
 
-	echo "Making a failed list."
-
-	if not [ -z $1 ];then
-		for broken in $1;do
-			echo "$broken\n" > $SCRIPTPATH/failed.log
+	if ! [ -z $1 ];then
+		if ! [ -d $SCRIPTPATH ] && [ -e $LOGPATH ];then
+			touch $SCRIPTPATH/failed.log
+		elif [ -d $SCRIPTPATH ] && [ -s $LOGPATH ];then 
+			rm $LOGPATH
+			touch $LOGPATH
+		fi
+		for BROKEN in ${failed[@]};do
+			if [ -d $BROKEN ];then
+				echo -en "$BROKEN" "\n" >> $LOGPATH
+			else
+				echo "Not a directory. Skipped."
+			fi
 		done
 	fi
-
-
 }
 
 
 function move_to_blah(){
 	
 	# takes $1
-
 	if [ -d $1 ];then
 		echo ""
 	else
 		printf "This is a bogus directory. Failed."
 		exit 1
 	fi
-
-
 }
 
 function draw_bar() {
@@ -112,15 +120,12 @@ function skapa_lista() {
 	OLDIFS=$IFS
 	IFS=$(echo -en "\n\b")
 
-	
 	# makes an array of directories
 	dirlist=$(find $1 -mindepth 1 -maxdepth 1 -type d |sort -u)
 	gfint=0
-	echo $dirlist
 	for item in $dirlist;do
-		nylista[gfint]=$item
+		nylista[gfint]=${item}
 		gfint=$((gfint+1))
-		echo $item
 	done
 	IFS=${OLDIFS}
 }
@@ -136,40 +141,30 @@ if [[ -d $1 ]];then
 	work_done=0
 
 	for katalog in "${nylista[@]}";do
-		#cols=$(tput cols)
-		#draw_bar $work_done ${#nylista[@]} $cols
 		for fil in $(listfiles $katalog);do  
 			if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
-				cols=$(tput cols)
-				draw_bar $work_done ${#nylista[@]} $cols
 				if cksfv -g $fil -q &> /dev/null;then
 					# array of successful items
 					success[sint]=$katalog
 					sint=$((sint+1))
 					work_done=$((work_done+1))
-					#printf "$PCOLOR Success. SFV Passed. $CEND"
-					draw_bar $work_done ${#nylista[@]} $cols
+					printf "$BCOLOR Success. SFV Passed. $CEND"
 				else
 					# array of failed items
 					failed[fint]=$katalog
 					fint=$((fint+1))			
 					work_done=$((work_done+1))
-					#printf "$FCOLOR Failed. Added to blacklist.$CEND"
-					draw_bar $work_done ${#nylista[@]} $cols
+					printf "$FCOLOR Failed. Added to blacklist.$CEND"
 				fi
 			fi
-			#draw_bar $work_done ${#nylista[@]} $cols
-			#make_list_of_failed $failed
+			cols=$(tput cols)
+			draw_bar ${work_done} ${#nylista[@]} ${cols}
 		done
 	done
+	make_list_of_failed ${failed[@]}
 else 
 	help
 fi
-
-echo "LAST WORK DONE: $work_done"
-echo "LAST TOTAL WORK: ${#nylista[@]}"
-echo "SUCCESS: " $sint
-echo "FAILED: " $fint
 
 # reset ifs ffs
 IFS=$OLDIFS
