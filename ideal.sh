@@ -29,14 +29,12 @@ function help(){
 	echo -e "\t--move,\t\t -m" "\t"	"Directory to move broken releases into."
 	echo -e "\t--write,\t -w" "\t" 	"Writable mode, default doesnt touch anything."
 	echo -e "\t--verbose,\t -v" "\t" "Toggles verbose output."
-
 }
-
-
 function check_if_trail(){
 
-	if [ $1 is not trailing ];then
+	if [ -z $1 ];then
 		#make trailing
+		echo ""
 	else
 		continue
 	fi
@@ -45,9 +43,14 @@ function check_if_trail(){
 
 function make_list_of_failed(){
 
+	SCRIPTPATH=$(realpath -s $0)
+
+	echo "Making a failed list."
+
 	if not [ -z $1 ];then
-		for broken in $1
-			echo "$broken\n" > :failed.log
+		for broken in $1;do
+			echo "$broken\n" > $SCRIPTPATH/failed.log
+		done
 	fi
 
 
@@ -59,7 +62,7 @@ function move_to_blah(){
 	# takes $1
 
 	if [ -d $1 ];then
-		
+		echo ""
 	else
 		printf "This is a bogus directory. Failed."
 		exit 1
@@ -75,14 +78,7 @@ function draw_bar() {
 	# $3 window_columns
 	IFS=$OLDIFS
 
-	# debug
-	#echo -e "WORK DONE: " "$1\n"
-	#echo -e "WORK TOTAL:" "$2\n"
-
 	x=$(($3-2))
-
-	#percent=$(echo {1} ${2}| awk '{ print $1 / $2 }')
-	#printf $percent
 
 	if [ $1 -eq $2 ];then
 		printf "\r[%*s" "${x}" | tr ' ' '▇'
@@ -120,10 +116,11 @@ function skapa_lista() {
 	# makes an array of directories
 	dirlist=$(find $1 -mindepth 1 -maxdepth 1 -type d |sort -u)
 	gfint=0
-	#echo $dirlist
+	echo $dirlist
 	for item in $dirlist;do
 		nylista[gfint]=$item
 		gfint=$((gfint+1))
+		echo $item
 	done
 	IFS=${OLDIFS}
 }
@@ -137,7 +134,10 @@ if [[ -d $1 ]];then
 	fint=0 # failed increment
 	skapa_lista $1
 	work_done=0
+
 	for katalog in "${nylista[@]}";do
+		#cols=$(tput cols)
+		#draw_bar $work_done ${#nylista[@]} $cols
 		for fil in $(listfiles $katalog);do  
 			if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
 				cols=$(tput cols)
@@ -158,14 +158,18 @@ if [[ -d $1 ]];then
 					draw_bar $work_done ${#nylista[@]} $cols
 				fi
 			fi
+			#draw_bar $work_done ${#nylista[@]} $cols
+			#make_list_of_failed $failed
 		done
 	done
 else 
 	help
 fi
 
-#echo "LAST WORK DONE: $work_done"
-#echo "LAST TOTAL WORK: ${#nylista[@]}"
+echo "LAST WORK DONE: $work_done"
+echo "LAST TOTAL WORK: ${#nylista[@]}"
+echo "SUCCESS: " $sint
+echo "FAILED: " $fint
 
 # reset ifs ffs
 IFS=$OLDIFS
