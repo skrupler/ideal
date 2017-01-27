@@ -17,6 +17,21 @@ FCOLOR="\033[31;1m"
 PCOLOR="\033[32;1m"
 CEND="\033[0m"
 
+function help(){
+	
+	# just a simple help screen
+	if [ -z $1 ];then
+		echo -e "$FCOLOR" "ERROR: You need at least one argument" "$CEND"
+	fi
+	echo -e "ideal.sh - sfv checker wrapper script in bash"
+	echo -e "Usage:"
+	echo -e "\t$0 /path/to/target --move /tmp --verbose"
+	echo -e "\t--move,\t\t -m" "\t"	"Directory to move broken releases into."
+	echo -e "\t--write,\t -w" "\t" 	"Writable mode, default doesnt touch anything."
+	echo -e "\t--verbose,\t -v" "\t" "Toggles verbose output."
+
+}
+
 function draw_bar() {
 
 	# hardcoding
@@ -75,18 +90,17 @@ if [[ -d $1 ]];then
 				else
 					# array of failed items
 					failed[fint]=$katalog
-					printf "$FCOLOR Failed. Added to blacklist.$CEND\n"
 					fint=$((fint+1))			
 					plist=$((plist+1))
+					printf "$FCOLOR Failed. Added to blacklist.$CEND\n"
 				fi
 			fi
 		cols=$(tput cols)
 		draw_bar $plist ${#nylista[@]} $cols
-			
 		done
 	done
 else 
-	echo "Wont do shit without params."
+	help
 fi
 
 # reset ifs ffs
