@@ -2,7 +2,7 @@
 A bash wrapper script for checking a directory of sub dirs with sfv files and files in them and move those directories who are incorrect into another directory (default: ./broken). 
 
 ## About
-This ia a POSIX compliant wrapper script in bash which checks folders for sfv and then scans them. Those
+This is a POSIX compliant wrapper script in bash which checks folders for sfv and then scans them. Those
 who fail will be logged to a file (default: failed.log). Ideal is swedish and is a word something near
 perfection which you want your releases to be. It makes use of cksfv for the actual sfv calculations.
 
@@ -17,7 +17,7 @@ perfection which you want your releases to be. It makes use of cksfv for the act
 
 ### Example output
 ```bash
-$~ ./ideal.sh /mnt/music/pop/2003
+user@hostname:~/ideal$ ./ideal.sh /mnt/music/pop/2003
 [▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                                       ]
 Operation completed 40 scans.
 5 broken releases.
