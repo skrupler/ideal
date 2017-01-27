@@ -6,10 +6,6 @@ This is a POSIX compliant wrapper script in bash which checks folders for sfv an
 who fail will be logged to a file (default: `failed.log`). Ideal is swedish and is a word something near
 perfection - which you want your releases to be. It makes use of cksfv for the actual sfv calculations.
 
-### Information
-The default usage which is `./ideal.sh /path/to/target/` does not touch anything except writing a `failed.log` once cksfv is done calculating the checksums.
-
-
 ### Dependencies
 
 * ~bc~
@@ -20,7 +16,7 @@ The default usage which is `./ideal.sh /path/to/target/` does not touch anything
 
 `user@hostname:~/ideal$ ideal.sh /path/to/directory`
 
-### TBA
+### TBR
 #####(Not yet implemented)
 
 ```bash
@@ -33,7 +29,6 @@ The default usage which is `./ideal.sh /path/to/target/` does not touch anything
 	--verbose			Toggles verbose output. Prints all the juicy stuff.
 
 ```
-
 
 ### Example output
 ```bash
