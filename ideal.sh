@@ -32,6 +32,42 @@ function help(){
 
 }
 
+
+function check_if_trail(){
+
+	if [ $1 is not trailing ];then
+		#make trailing
+	else
+		continue
+	fi
+}
+
+
+function make_list_of_failed(){
+
+	if not [ -z $1 ];then
+		for broken in $1
+			echo "$broken\n" > :failed.log
+	fi
+
+
+}
+
+
+function move_to_blah(){
+	
+	# takes $1
+
+	if [ -d $1 ];then
+		
+	else
+		printf "This is a bogus directory. Failed."
+		exit 1
+	fi
+
+
+}
+
 function draw_bar() {
 
 	# $1 work_done
@@ -45,17 +81,23 @@ function draw_bar() {
 
 	x=$(($3-2))
 
+	#percent=$(echo {1} ${2}| awk '{ print $1 / $2 }')
+	#printf $percent
+
 	if [ $1 -eq $2 ];then
-		#printf "%*s" "${3}"
+		printf "\r[%*s" "${x}" | tr ' ' '▇'
+		printf "%*s]"
 		printf "${SCOLOR}Operation completed ${1} scans.${CEND}\n"
 		printf "${FCOLOR}${fint} broken releases.${CEND}\n"
 		printf "${SCOLOR}${sint} intact releases.${CEND}\n"
 	else
+		
 		# to account for the []	chars
+		#percent=$(echo {1} ${2}| awk '{ print $1 / $2 }')
 
         i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
         j=$((${x}-i)) # window_column - (work_done*window_columns / work_total)
-    	printf "\r[%*s" "${i}" | tr ' ' '#'
+    	printf "\r[%*s" "${i}" | tr ' ' '▇'
 	    printf "%*s]\r" "${j}"
 	fi
 	IFS=$(echo -en "\n\b")
@@ -95,13 +137,12 @@ if [[ -d $1 ]];then
 	fint=0 # failed increment
 	skapa_lista $1
 	work_done=0
-	
-	cols=$(tput cols)
 	for katalog in "${nylista[@]}";do
 		for fil in $(listfiles $katalog);do  
 			if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
+				cols=$(tput cols)
 				draw_bar $work_done ${#nylista[@]} $cols
-				if cksfv -g $fil -q;then
+				if cksfv -g $fil -q &> /dev/null;then
 					# array of successful items
 					success[sint]=$katalog
 					sint=$((sint+1))
