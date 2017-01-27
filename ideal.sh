@@ -34,8 +34,10 @@ function help(){
 
 function draw_bar() {
 
-	# hardcoding
-	#bw=237
+	# $1 work_done
+	# $2 work_total
+	# $3 window_columns
+
 	if [ $1 -eq -1 ];then
 		printf "\r %*s\r" "${3}"
 	else
@@ -76,27 +78,25 @@ if [[ -d $1 ]];then
 	skapa_lista $1
 
 	for katalog in "${nylista[@]}";do
-	plist=0
+	work_done=0
 		for fil in $(listfiles $katalog);do  
 			if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
-				#draw_bar $plist ${#nylista[@]} $cols
 				if cksfv -g $fil -q;then
-
 					# array of successful items
 					success[sint]=$katalog
 					sint=$((sint+1))
-					plist=$((plist+1))
+					work_done=$((work_done+1))
 					printf "$PCOLOR Success. SFV Passed. $CEND\n"
 				else
 					# array of failed items
 					failed[fint]=$katalog
 					fint=$((fint+1))			
-					plist=$((plist+1))
+					work_done=$((work_done+1))
 					printf "$FCOLOR Failed. Added to blacklist.$CEND\n"
 				fi
 			fi
 		cols=$(tput cols)
-		draw_bar $plist ${#nylista[@]} $cols
+		draw_bar $work_done ${#nylista[@]} $cols
 		done
 	done
 else 
