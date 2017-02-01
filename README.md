@@ -16,18 +16,16 @@ The default usage `./ideal.sh -t /path/to/target/` does not touch anything excep
 
 `$ ideal.sh -t /path/to/directory -w -m`
 
-### TBR
-#####(Not yet implemented)
-
 ```bash
 
 	ideal.sh -t /path/to/target -w -m /tmp
 
 	-w			DANGER: Use with caution. Enables writable mode. Use with --move. 
 	-m			Directory to move broken releases into. Ignored unless -w is supplied.
-			i	If no argument passed to -m then directory ~/temp is assumed for moving the broken folders to.
+				If no argument passed to -m then directory ~/temp is assumed for moving the broken folders to.
 	-t			Target path to scan.
 	-v			Toggles verbose output. Prints all the juicy stuff.
+	-d			Defines folder depth from target path. ie -d 2 /path/to/podcast will search 2 levels down.
 
 	-h			Prints this message.
 

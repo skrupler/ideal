@@ -68,13 +68,17 @@ helpmsg(){
 	
 	# just a simple help screen
 	# not valid anymore anyways
+
+	echo -e "\n"
+	echo -e "\tideal.sh\n"
+	echo -e "\tUsage:"
+	echo -e "\t$0 -t /path/to/target -v\n"
+
+	echo -e "\t-m" "\t"		"Directory to move broken releases into."
+	echo -e "\t-w" "\t" 	"Writable mode, default doesnt touch anything."
+	echo -e "\t-v" "\t"		"Toggles verbose output aka also printing successful."
+	echo -e "\t-h" "\t"		"Prints this message.\n"
 	
-	echo -e "ideal.sh - sfv checker wrapper script in bash"
-	echo -e "Usage:"
-	echo -e "\t$0 /path/to/target --move /tmp --verbose"
-	echo -e "\t--move,\t\t -m" "\t"	"Directory to move broken releases into."
-	echo -e "\t--write,\t -w" "\t" 	"Writable mode, default doesnt touch anything."
-	echo -e "\t--verbose,\t -v" "\t" "Toggles verbose output."
 
 }
 
