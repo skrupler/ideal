@@ -165,9 +165,7 @@ runnable(){
 		work_done=0
 		broken=false
 		for katalog in "${nylista[@]}";do
-			cols=$(tput cols)
-			draw_bar ${work_done} ${#nylista[@]} ${cols}
-			for fil in $(listfiles $katalog);do  
+			for fil in $(listfiles $katalog);do 
 				if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
 					broken=false
 					if cksfv -g $fil -q &> /dev/null;then
@@ -183,12 +181,15 @@ runnable(){
 						broken=true
 					fi
 				fi
-			done						
+			done
 			if [[ $broken == true ]];then
-				printf "Failed: $katalog\n"
+				printf "${FCOLOR}Failed: $katalog${CEND}\n"
 			elif [[ $verbose == true ]] && [[ $broken == false ]];then
 				printf "Success: $katalog\n"
 			fi
+			cols=$(tput cols)
+			draw_bar ${work_done} ${#nylista[@]} ${cols}
+
 		done
 		make_list_of_failed ${failed[@]}
 	else 
