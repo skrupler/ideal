@@ -10,9 +10,6 @@
 # 	those with cksfv.
 # 	finally it creates a list of those who do not have sfv and moves em.
 
-# hax circumvent dirs with space in it
-#OLDIFS=$IFS
-#IFS=$(echo -en "\n\b")
 FCOLOR="\033[31;1m"
 PCOLOR="\033[32;1m"
 BCOLOR="\033[34;1m"
@@ -21,18 +18,72 @@ CEND="\033[0m"
 menu(){
 
 	# 
+	OLDIFS=$IFS
+	IFS=$'\n'
 
+	target=""
+	move="~/"
+	write=false
+	verbose=false	
 
+	while getopts ":t:mwvh" opt; do
+		case $opt in
+		t)
+			#if [[ ! -z $OPTARG ]] || [[ -d $OPTARG ]];then
+			target=$OPTARG
+			#else
+			#echo -ne "Missing arguments for target.\n"
+			#fi
+			;;
+		m)	
+			if [[ -d $OPTARG ]] && [[ ! -z $OPTARG ]];then
+				move=$OPTARG
+			else
+				move=$move
+			fi
+			;;
+		w)
+			if $OPT;then
+				write=true
+			else
+				write=false
+			fi
+			echo -ne "Write mode: $write\n"
+			;;
+		h)
+			helpmsg
+			exit 1
+			;;
+		v)
+			verbose=true
+			echo -ne "Verbose mode: $verbose\n"
+
+			;;
+		\?)
+			echo "Invalid option. -$OPTARG" >&2
+			exit 1
+			;;
+		:)	
+			echo "Option -$OPTARG requires an argument." >&2
+			exit 1
+			;;
+		*)
+			helpmsg
+			exit 1
+			;;
+		esac
+	done
+	IFS=$OLDIFS
 }
 
 
 
-function help(){
+helpmsg(){
 	
 	# just a simple help screen
-	if [ -z $1 ];then
-		echo -e "$FCOLOR" "ERROR: You need at least one argument" "$CEND"
-	fi
+	#if [ -z $1 ];then
+	#	echo -e "$FCOLOR" "ERROR: You need at least one argument" "$CEND"
+	#fi
 	echo -e "ideal.sh - sfv checker wrapper script in bash"
 	echo -e "Usage:"
 	echo -e "\t$0 /path/to/target --move /tmp --verbose"
@@ -40,7 +91,8 @@ function help(){
 	echo -e "\t--write,\t -w" "\t" 	"Writable mode, default doesnt touch anything."
 	echo -e "\t--verbose,\t -v" "\t" "Toggles verbose output."
 }
-function check_if_trail(){
+
+check_if_trail(){
 
 	if [ -z $1 ];then
 		#make trailing
@@ -50,8 +102,7 @@ function check_if_trail(){
 	fi
 }
 
-
-function make_list_of_failed(){
+make_list_of_failed(){
 
 	# writes all failed to failed.log
 	SCRIPT=$(realpath -s $0)
@@ -77,7 +128,7 @@ function make_list_of_failed(){
 }
 
 
-function move_to_blah(){
+move_to_blah(){
 	
 	# takes $1
 	if [ -d $1 ];then
@@ -88,7 +139,7 @@ function move_to_blah(){
 	fi
 }
 
-function draw_bar() {
+draw_bar() {
 
 	# $1 work_done
 	# $2 work_total
@@ -116,7 +167,7 @@ function draw_bar() {
 	IFS=$(echo -en "\n\b")
 }
 
-function listfiles() {
+listfiles() {
 	if find $1 -maxdepth 1 -type f -name "*.sfv";then
 		continue
 	else
@@ -124,7 +175,7 @@ function listfiles() {
 	fi
 }
 
-function skapa_lista() {
+skapa_lista() {
 
 	OLDIFS=$IFS
 	IFS=$(echo -en "\n\b")
@@ -139,41 +190,48 @@ function skapa_lista() {
 	IFS=${OLDIFS}
 }
 
-if [[ -d $1 ]];then
+runnable(){
 
-	# gets all the magic going,	scans directories, creates list of sfv 
-	# then runs it thru cksfv.
+	if [[ -d $1 ]];then
 
-	sint=0 # success increment
-	fint=0 # failed increment
-	skapa_lista $1
-	work_done=0
+		# gets all the magic going,	scans directories, creates list of sfv 
+		# then runs it thru cksfv.
 
-	for katalog in "${nylista[@]}";do
-		for fil in $(listfiles $katalog);do  
-			if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
-				if cksfv -g $fil -q &> /dev/null;then
-					# array of successful items
-					success[sint]=$katalog
-					sint=$((sint+1))
-					work_done=$((work_done+1))
-					printf "$BCOLOR Success. SFV Passed. $CEND"
-				else
-					# array of failed items
-					failed[fint]=$katalog
-					fint=$((fint+1))			
-					work_done=$((work_done+1))
-					printf "$FCOLOR Failed. Added to blacklist.$CEND"
+		sint=0 # success increment
+		fint=0 # failed increment
+		skapa_lista $1
+		work_done=0
+
+		for katalog in "${nylista[@]}";do
+			for fil in $(listfiles $katalog);do  
+				if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
+					if cksfv -g $fil -q &> /dev/null;then
+						# array of successful items
+						success[sint]=$katalog
+						sint=$((sint+1))
+						work_done=$((work_done+1))
+						printf "$BCOLOR Success. SFV Passed. $CEND"
+					else
+						# array of failed items
+						failed[fint]=$katalog
+						fint=$((fint+1))			
+						work_done=$((work_done+1))
+						printf "$FCOLOR Failed. Added to blacklist.$CEND"
+					fi
 				fi
-			fi
-			cols=$(tput cols)
-			draw_bar ${work_done} ${#nylista[@]} ${cols}
+				cols=$(tput cols)
+				draw_bar ${work_done} ${#nylista[@]} ${cols}
+			done
 		done
-	done
-	make_list_of_failed ${failed[@]}
-else 
-	help
-fi
+		make_list_of_failed ${failed[@]}
+	else 
+		helpmsg
+	fi
 
+}
 # reset ifs ffs
 IFS=$OLDIFS
+
+
+menu "$@"
+#runnable
