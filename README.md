@@ -12,7 +12,7 @@ perfection - which you want your releases to be. It makes use of cksfv for the a
 * `cksfv`
 
 ### Usage
-The default usage which is `./ideal.sh /path/to/target/` does not touch anything except writing a `failed.log` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
+The default usage `./ideal.sh -t /path/to/target/` does not touch anything except writing a `failed.log` to `~/` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
 
 `$ ideal.sh -t /path/to/directory -w -m`
 
