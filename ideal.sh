@@ -158,7 +158,6 @@ draw_bar() {
 		
 		# to account for the []	chars
 		#percent=$(echo {1} ${2}| awk '{ print $1 / $2 }')
-		printf $fil
         i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
         j=$((${x}-i)) # window_column - (work_done*window_columns / work_total)
     	printf "\r[%*s" "${i}" | tr ' ' '▇'
@@ -202,25 +201,33 @@ runnable(){
 		skapa_lista $1
 		work_done=0
 
+		broken=false
 		for katalog in "${nylista[@]}";do
 			for fil in $(listfiles $katalog);do  
 				if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
+					broken=false
 					if cksfv -g $fil -q &> /dev/null;then
 						# array of successful items
 						success[sint]=$katalog
 						sint=$((sint+1))
 						work_done=$((work_done+1))
-						printf "$BCOLOR Success. SFV Passed. $CEND"
 					else
 						# array of failed items
 						failed[fint]=$katalog
 						fint=$((fint+1))			
 						work_done=$((work_done+1))
-						printf "$FCOLOR Failed. Added to blacklist.$CEND"
+						broken=true
 					fi
 				fi
+
+				if [[ $broken == true ]];then
+					printf "Failed: $katalog\n"
+				elif [[ $verbose == true ]] && [[ $broken==false ]];then
+					printf "Success: $katalog\n"
+				fi	
 				cols=$(tput cols)
 				draw_bar ${work_done} ${#nylista[@]} ${cols}
+
 			done
 		done
 		make_list_of_failed ${failed[@]}
