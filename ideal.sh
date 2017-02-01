@@ -5,6 +5,7 @@
 #	LiCENSE:	GPLV2
 #	DATE:		2017-01-26
 
+# pretty colors
 FCOLOR="\033[31;1m"
 PCOLOR="\033[32;1m"
 BCOLOR="\033[34;1m"
@@ -44,7 +45,6 @@ menu(){
 		v)
 			verbose=true
 			printf "Verbose mode: $verbose\n"
-
 			;;
 		\?)
 			printf "Invalid option. -$OPTARG\n" >&2
@@ -115,7 +115,7 @@ draw_bar() {
 
 	if [ $1 -eq $2 ];then
 		
-		printf "\r[%*s" "${x}" | tr ' ' '#'  #'▇'
+		printf "\r[%*s]" "${x}" | tr ' ' '#'  #'▇'
 		printf "%*s]"
 		printf "${SCOLOR}Operation completed ${1} scans.${CEND}\n"
 		printf "${FCOLOR}${fint} broken releases.${CEND}\n"
@@ -164,6 +164,7 @@ runnable(){
 		skapa_lista $1
 		work_done=0
 		broken=false
+		el=$(tput el) # this fixes the fucking return carriage
 		for katalog in "${nylista[@]}";do
 			for fil in $(listfiles $katalog);do 
 				if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
@@ -183,9 +184,11 @@ runnable(){
 				fi
 			done
 			if [[ $broken == true ]];then
-				printf "${FCOLOR}Failed: $katalog${CEND}\n"
+				#printf "${FCOLOR}Failed: $katalog${CEND}\n"
+				printf '${FCOLOR}Failed %s%s\n${CEND}' "$katalog" "$el"
 			elif [[ $verbose == true ]] && [[ $broken == false ]];then
-				printf "Success: $katalog\n"
+				printf 'Success %s%s\n' "$katalog" "$el"
+				#printf "Success:"
 			fi
 			cols=$(tput cols)
 			draw_bar ${work_done} ${#nylista[@]} ${cols}
@@ -199,4 +202,4 @@ runnable(){
 }
 
 menu "$@"
-runnable $target
+runnable "$target"
