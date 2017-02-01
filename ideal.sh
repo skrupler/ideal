@@ -5,21 +5,12 @@
 #	LiCENSE:	GPLV2
 #	DATE:		2017-01-26
 
-#	ABOUT
-# 	ideal.sh scans $1 param for directories with sfv files, adds to array. then scans 
-# 	those with cksfv.
-# 	finally it creates a list of those who do not have sfv and moves em.
-
 FCOLOR="\033[31;1m"
 PCOLOR="\033[32;1m"
 BCOLOR="\033[34;1m"
 CEND="\033[0m"
 
 menu(){
-
-	# 
-	OLDIFS=$IFS
-	IFS=$'\n'
 
 	target=""
 	move="~/"
@@ -29,11 +20,7 @@ menu(){
 	while getopts ":t:mwvh" opt; do
 		case $opt in
 		t)
-			#if [[ ! -z $OPTARG ]] || [[ -d $OPTARG ]];then
 			target=$OPTARG
-			#else
-			#echo -ne "Missing arguments for target.\n"
-			#fi
 			;;
 		m)	
 			if [[ -d $OPTARG ]] && [[ ! -z $OPTARG ]];then
@@ -48,7 +35,7 @@ menu(){
 			else
 				write=false
 			fi
-			echo -ne "Write mode: $write\n"
+			printf "Write mode: $write\n"
 			;;
 		h)
 			helpmsg
@@ -56,15 +43,15 @@ menu(){
 			;;
 		v)
 			verbose=true
-			echo -ne "Verbose mode: $verbose\n"
+			printf "Verbose mode: $verbose\n"
 
 			;;
 		\?)
-			echo "Invalid option. -$OPTARG" >&2
+			printf "Invalid option. -$OPTARG\n" >&2
 			exit 1
 			;;
 		:)	
-			echo "Option -$OPTARG requires an argument." >&2
+			printf "Option -$OPTARG requires an argument.\n" >&2
 			exit 1
 			;;
 		*)
@@ -73,7 +60,6 @@ menu(){
 			;;
 		esac
 	done
-	IFS=$OLDIFS
 }
 
 
@@ -81,25 +67,15 @@ menu(){
 helpmsg(){
 	
 	# just a simple help screen
-	#if [ -z $1 ];then
-	#	echo -e "$FCOLOR" "ERROR: You need at least one argument" "$CEND"
-	#fi
+	# not valid anymore anyways
+	
 	echo -e "ideal.sh - sfv checker wrapper script in bash"
 	echo -e "Usage:"
 	echo -e "\t$0 /path/to/target --move /tmp --verbose"
 	echo -e "\t--move,\t\t -m" "\t"	"Directory to move broken releases into."
 	echo -e "\t--write,\t -w" "\t" 	"Writable mode, default doesnt touch anything."
 	echo -e "\t--verbose,\t -v" "\t" "Toggles verbose output."
-}
 
-check_if_trail(){
-
-	if [ -z $1 ];then
-		#make trailing
-		echo ""
-	else
-		continue
-	fi
 }
 
 make_list_of_failed(){
@@ -128,42 +104,29 @@ make_list_of_failed(){
 }
 
 
-move_to_blah(){
-	
-	# takes $1
-	if [ -d $1 ];then
-		echo ""
-	else
-		printf "This is a bogus directory. Failed."
-		exit 1
-	fi
-}
 
 draw_bar() {
 
 	# $1 work_done
 	# $2 work_total
 	# $3 window_columns
-	IFS=$OLDIFS
 
 	x=$(($3-2))
 
 	if [ $1 -eq $2 ];then
-		printf "\r[%*s" "${x}" | tr ' ' '▇'
+		
+		printf "\r[%*s" "${x}" | tr ' ' '#'  #'▇'
 		printf "%*s]"
 		printf "${SCOLOR}Operation completed ${1} scans.${CEND}\n"
 		printf "${FCOLOR}${fint} broken releases.${CEND}\n"
 		printf "${SCOLOR}${sint} intact releases.${CEND}\n"
 	else
-		
-		# to account for the []	chars
-		#percent=$(echo {1} ${2}| awk '{ print $1 / $2 }')
-        i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
+       
+		i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
         j=$((${x}-i)) # window_column - (work_done*window_columns / work_total)
-    	printf "\r[%*s" "${i}" | tr ' ' '▇'
+    	printf "\r[%*s" "${i}" | tr ' ' '#'  # '▇'
 	    printf "%*s]\r" "${j}"
 	fi
-	IFS=$(echo -en "\n\b")
 }
 
 listfiles() {
@@ -200,9 +163,10 @@ runnable(){
 		fint=0 # failed increment
 		skapa_lista $1
 		work_done=0
-
 		broken=false
 		for katalog in "${nylista[@]}";do
+			cols=$(tput cols)
+			draw_bar ${work_done} ${#nylista[@]} ${cols}
 			for fil in $(listfiles $katalog);do  
 				if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
 					broken=false
@@ -219,16 +183,12 @@ runnable(){
 						broken=true
 					fi
 				fi
-
-				if [[ $broken == true ]];then
-					printf "Failed: $katalog\n"
-				elif [[ $verbose == true ]] && [[ $broken==false ]];then
-					printf "Success: $katalog\n"
-				fi	
-				cols=$(tput cols)
-				draw_bar ${work_done} ${#nylista[@]} ${cols}
-
-			done
+			done						
+			if [[ $broken == true ]];then
+				printf "Failed: $katalog\n"
+			elif [[ $verbose == true ]] && [[ $broken == false ]];then
+				printf "Success: $katalog\n"
+			fi
 		done
 		make_list_of_failed ${failed[@]}
 	else 
@@ -236,9 +196,6 @@ runnable(){
 	fi
 
 }
-# reset ifs ffs
-IFS=$OLDIFS
-
 
 menu "$@"
 runnable $target
