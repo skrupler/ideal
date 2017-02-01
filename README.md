@@ -14,7 +14,7 @@ perfection - which you want your releases to be. It makes use of cksfv for the a
 ### Usage
 The default usage which is `./ideal.sh /path/to/target/` does not touch anything except writing a `failed.log` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
 
-`$ ideal.sh -t /path/to/directory`
+`$ ideal.sh -t /path/to/directory -w -m`
 
 ### TBR
 #####(Not yet implemented)
@@ -25,16 +25,17 @@ The default usage which is `./ideal.sh /path/to/target/` does not touch anything
 
 	-w			DANGER: Use with caution. Enables writable mode. Use with --move. 
 	-m			Directory to move broken releases into. Ignored unless -w is supplied.
-			i	This requires an argument.
+			i	If no argument passed to -m then directory ~/temp is assumed for moving the broken folders to.
 	-t			Target path to scan.
 	-v			Toggles verbose output. Prints all the juicy stuff.
+
 	-h			Prints this message.
 
 ```
 
 ### Example output
 ```bash
-user@hostname:~/ideal$ ./ideal.sh /mnt/music/pop/2003
+$ ideal.sh -t /mnt/music/pop/2003
 [▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                                       ]
 Operation completed 40 scans.
 5 broken releases.
