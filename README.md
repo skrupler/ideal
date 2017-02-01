@@ -8,8 +8,8 @@ perfection - which you want your releases to be. It makes use of cksfv for the a
 
 ### Dependencies
 
-* `~~bc~~`
-* `cksfv`
+* ~~bc~~
+* cksfv
 
 ### Usage
 The default usage `./ideal.sh -t /path/to/target/` does not touch anything except writing a `failed.log` to `~/` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
