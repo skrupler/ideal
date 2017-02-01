@@ -119,7 +119,7 @@ draw_bar() {
 
 	if [ $1 -eq $2 ];then
 		
-		printf "\r[%*s]" "${x}" | tr ' ' '#'  #'▇'
+		printf "\r[%*s" "${x}" | tr ' ' '#'  #'▇'
 		printf "%*s]"
 		printf "${SCOLOR}Operation completed ${1} scans.${CEND}\n"
 		printf "${FCOLOR}${fint} broken releases.${CEND}\n"
@@ -188,11 +188,9 @@ runnable(){
 				fi
 			done
 			if [[ $broken == true ]];then
-				#printf "${FCOLOR}Failed: $katalog${CEND}\n"
 				printf '${FCOLOR}Failed %s%s\n${CEND}' "$katalog" "$el"
 			elif [[ $verbose == true ]] && [[ $broken == false ]];then
 				printf 'Success %s%s\n' "$katalog" "$el"
-				#printf "Success:"
 			fi
 			cols=$(tput cols)
 			draw_bar ${work_done} ${#nylista[@]} ${cols}
