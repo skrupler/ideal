@@ -158,7 +158,7 @@ draw_bar() {
 		
 		# to account for the []	chars
 		#percent=$(echo {1} ${2}| awk '{ print $1 / $2 }')
-
+		printf $fil
         i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
         j=$((${x}-i)) # window_column - (work_done*window_columns / work_total)
     	printf "\r[%*s" "${i}" | tr ' ' '▇'
@@ -234,4 +234,4 @@ IFS=$OLDIFS
 
 
 menu "$@"
-#runnable
+runnable $target
