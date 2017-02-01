@@ -6,10 +6,10 @@
 #	DATE:		2017-01-26
 
 # pretty colors
-FCOLOR="\033[31;1m"
-PCOLOR="\033[32;1m"
-BCOLOR="\033[34;1m"
-CEND="\033[0m"
+FC='\033[31;1m'
+PC='\033[32;1m'
+BC='\033[34;1m'
+CEND='\033[0m'
 
 menu(){
 
@@ -62,8 +62,6 @@ menu(){
 	done
 }
 
-
-
 helpmsg(){
 	
 	# just a simple help screen
@@ -78,7 +76,6 @@ helpmsg(){
 	echo -e "\t-w" "\t" 	"Writable mode, default doesnt touch anything."
 	echo -e "\t-v" "\t"		"Toggles verbose output aka also printing successful."
 	echo -e "\t-h" "\t"		"Prints this message.\n"
-	
 
 }
 
@@ -106,8 +103,6 @@ make_list_of_failed(){
 		done
 	fi
 }
-
-
 
 draw_bar() {
 
@@ -158,6 +153,9 @@ skapa_lista() {
 
 runnable(){
 
+	OLDIFS=$IFS
+	IFS=$(echo -en "\n\b")
+
 	if [[ -d $1 ]];then
 
 		# gets all the magic going,	scans directories, creates list of sfv 
@@ -188,9 +186,9 @@ runnable(){
 				fi
 			done
 			if [[ $broken == true ]];then
-				printf '${FCOLOR}Failed %s%s\n${CEND}' "$katalog" "$el"
+				printf '%s %s%s\n' "[ FAILED ]" "$katalog" "$el"
 			elif [[ $verbose == true ]] && [[ $broken == false ]];then
-				printf 'Success %s%s\n' "$katalog" "$el"
+				printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
 			fi
 			cols=$(tput cols)
 			draw_bar ${work_done} ${#nylista[@]} ${cols}
@@ -200,7 +198,7 @@ runnable(){
 	else 
 		helpmsg
 	fi
-
+	IFS=${OLDIFS}
 }
 
 menu "$@"

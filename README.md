@@ -24,7 +24,7 @@ The default usage `./ideal.sh -t /path/to/target/` does not touch anything excep
 	-m			Directory to move broken releases into. Ignored unless -w is supplied.
 				If no argument passed to -m then directory ~/temp is assumed for moving the broken folders to.
 	-t			Target path to scan.
-	-v			Toggles verbose output. Prints all the juicy stuff.
+	-v			Toggles verbose output. Prints successful sfv checks aswell.
 	-d			Defines folder depth from target path. ie -d 2 /path/to/podcast will search 2 levels down.
 
 	-h			Prints this message.
@@ -42,11 +42,15 @@ Operation completed 40 scans.
 
 ### TODOs
 
+
+* [] show percentage completion in margin #progressbar
+* [] add maxdepth param via cmdline
 * [] add archive possibility - aka save an archival log file aswell. archive.log or ideal.log
+* [/] colored output
+* [/] cleanup printf
+
 * [x] fix bug where dirs with spaces bor
 * [x] write a failed rls log
 * [x] proper args handling
 * [x] scrolling output yet with progressbar working(?)
 * [x] eliminate bc, awk perhaps?
-* [] show percentage completion in margin #progressbar
-* [] add maxdepth param via cmdline
