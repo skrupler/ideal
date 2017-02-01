@@ -18,6 +18,15 @@ PCOLOR="\033[32;1m"
 BCOLOR="\033[34;1m"
 CEND="\033[0m"
 
+menu(){
+
+	# 
+
+
+}
+
+
+
 function help(){
 	
 	# just a simple help screen

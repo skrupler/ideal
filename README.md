@@ -8,25 +8,27 @@ perfection - which you want your releases to be. It makes use of cksfv for the a
 
 ### Dependencies
 
-* ~bc~
-* cksfv
+* `~~bc~~`
+* `cksfv`
 
 ### Usage
 The default usage which is `./ideal.sh /path/to/target/` does not touch anything except writing a `failed.log` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
 
-`user@hostname:~/ideal$ ideal.sh /path/to/directory`
+`$ ideal.sh -t /path/to/directory`
 
 ### TBR
 #####(Not yet implemented)
 
 ```bash
 
-	ideal.sh /path/to/target --write --move /tmp --verbose
+	ideal.sh -t /path/to/target -w -m /tmp
 
-	--write,	-w,		DANGER: Use with caution. Enables writable mode. Use with --move. 
-	--move,		-m,		Directory to move broken releases into. Ignored unless -w is supplied.
-						This requires an argument.
-	--verbose			Toggles verbose output. Prints all the juicy stuff.
+	-w			DANGER: Use with caution. Enables writable mode. Use with --move. 
+	-m			Directory to move broken releases into. Ignored unless -w is supplied.
+			i	This requires an argument.
+	-t			Target path to scan.
+	-v			Toggles verbose output. Prints all the juicy stuff.
+	-h			Prints this message.
 
 ```
 
