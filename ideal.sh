@@ -18,10 +18,13 @@ menu(){
 	write=false
 	verbose=false	
 
-	while getopts ":t:mwvh" opt; do
+	while getopts ":t:r:mwvh" opt; do
 		case $opt in
 		t)
 			target=$OPTARG
+			;;
+		r)
+			rlstype=$OPTARG
 			;;
 		m)	
 			if [[ -d $OPTARG ]] && [[ ! -z $OPTARG ]];then
@@ -75,6 +78,7 @@ helpmsg(){
 	echo -e "\t-m" "\t"		"Directory to move broken releases into."
 	echo -e "\t-w" "\t" 	"Writable mode, default doesnt touch anything."
 	echo -e "\t-v" "\t"		"Toggles verbose output aka also printing successful."
+	echo -e "\t-r" "\t"		"Specify type of release. ie: mp3 or movie."
 	echo -e "\t-h" "\t"		"Prints this message.\n"
 
 }
@@ -97,10 +101,21 @@ make_list_of_failed(){
 		for BROKEN in ${failed[@]};do
 			if [ -d $BROKEN ];then
 				echo -en "$BROKEN" "\n" >> $LOGPATH
+				echo -ne "BROKEN: $BROKEN\n"
 			else
 				echo "Not a directory. Skipped."
 			fi
 		done
+
+		for INCOMPLETE in ${incomplete[@]};do
+			if [ -d $INCOMPLETE ];then
+				echo -en "$INCOMPLETE" "\n" >> $LOGPATH
+				echo -ne "INCOMPLETE: $INCOMPLETE\n"
+			else
+				echo "Not a directory. Skipped."
+			fi
+		done
+
 	fi
 }
 
@@ -143,10 +158,39 @@ skapa_lista() {
 
 	# makes an array of directories
 	dirlist=$(find $1 -mindepth 1 -maxdepth 1 -type d |sort -u)
+
+
+	# bug exists because there is no check if its an sfv
+
 	gfint=0
-	for item in $dirlist;do
-		nylista[gfint]=${item}
-		gfint=$((gfint+1))
+	ic=0
+	for directory in $dirlist;do
+
+		lsdir=$(ls $directory)
+
+		if [[ $2 == mp3 ]];then	
+			case $lsdir in
+			*.sfv | *.nfo | *.mp3 | *.m3u | *.* )
+				nylista[gfint]=${directory}
+				gfint=$((gfint+1))
+				;;
+			*)
+				incomplete[ic]=${directory}
+				ic=$((ic+1))
+				;;
+			esac
+		elif [[	$2 == movie ]];then
+			case $lsdir in			
+			*.sfv | *.nfo | *.rar )
+				nylista[gfint]=${directory}
+				gfint=$((gfint+1))
+				;;
+			*)
+				incomplete[ic]=${directory}
+				ic=$((ic+1))
+				;;
+			esac
+		fi
 	done
 	IFS=${OLDIFS}
 }
@@ -163,7 +207,7 @@ runnable(){
 
 		sint=0 # success increment
 		fint=0 # failed increment
-		skapa_lista $1
+		skapa_lista $1 $2
 		work_done=0
 		broken=false
 		el=$(tput el) # this fixes the fucking return carriage
@@ -176,25 +220,29 @@ runnable(){
 						success[sint]=$katalog
 						sint=$((sint+1))
 						work_done=$((work_done+1))
+						printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
 					else
 						# array of failed items
 						failed[fint]=$katalog
 						fint=$((fint+1))			
 						work_done=$((work_done+1))
 						broken=true
+						printf '%s %s%s\n' "[ FAILED  ]" "$katalog" "$el"
 					fi
 				fi
 			done
-			if [[ $broken == true ]];then
-				printf '%s %s%s\n' "[ FAILED ]" "$katalog" "$el"
-			elif [[ $verbose == true ]] && [[ $broken == false ]];then
-				printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
-			fi
+			# DONT NEED THIS NO MORE
+			#if [[ $broken == true ]];then
+			#	printf '%s %s%s\n' "[ FAILED  ]" "$katalog" "$el"
+			#elif [[ $verbose == true ]] && [[ $broken == false ]] && [[ $fil == *.sfv ]];then
+			#	printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
+			#fi
+	
 			cols=$(tput cols)
 			draw_bar ${work_done} ${#nylista[@]} ${cols}
 
 		done
-		make_list_of_failed ${failed[@]}
+		make_list_of_failed ${nylista[@]}
 	else 
 		helpmsg
 	fi
@@ -202,4 +250,4 @@ runnable(){
 }
 
 menu "$@"
-runnable "$target"
+runnable "$target" "$rlstype"
