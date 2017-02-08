@@ -2,7 +2,7 @@
 A bash wrapper for checking a directory tree of sub directories containing `.sfv` files and then calculate the checksum and blacklist those whom are deemed unfit. 
 
 ## About
-This is a POSIX compliant wrapper script in bash which checks folders for sfv and then scans them. Those
+This is a wrapper script in bash which checks folders for sfv and then scans them. Those
 who fail will be logged to a file (default: `failed.log`). Ideal is swedish and is a word something near
 perfection - which you want your releases to be. It makes use of cksfv for the actual sfv calculations.
 

@@ -11,12 +11,14 @@ PC='\033[32;1m'
 BC='\033[34;1m'
 CEND='\033[0m'
 
+source lib/helper.sh
+
 menu(){
 
 	target=""
 	move="~/"
 	write=false
-	verbose=false	
+	verbose=false
 
 	while getopts ":t:r:mwvh" opt; do
 		case $opt in
@@ -26,7 +28,7 @@ menu(){
 		r)
 			rlstype=$OPTARG
 			;;
-		m)	
+		m)
 			if [[ -d $OPTARG ]] && [[ ! -z $OPTARG ]];then
 				move=$OPTARG
 			else
@@ -53,7 +55,7 @@ menu(){
 			printf "Invalid option. -$OPTARG\n" >&2
 			exit 1
 			;;
-		:)	
+		:)
 			printf "Option -$OPTARG requires an argument.\n" >&2
 			exit 1
 			;;
@@ -66,7 +68,7 @@ menu(){
 }
 
 helpmsg(){
-	
+
 	# just a simple help screen
 	# not valid anymore anyways
 
@@ -128,15 +130,14 @@ draw_bar() {
 	x=$(($3-2))
 
 	if [ $1 -eq $2 ];then
-		
+
 		printf "\r[%*s" "${x}" | tr ' ' '#'  #'▇'
 		printf "%*s]"
 		printf "${SCOLOR}Operation completed ${1} scans.${CEND}\n"
 		printf "${FCOLOR}${fint} broken releases.${CEND}\n"
 		printf "${SCOLOR}${sint} intact releases.${CEND}\n"
 	else
-       
-		i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
+	i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
         j=$((${x}-i)) # window_column - (work_done*window_columns / work_total)
     	printf "\r[%*s" "${i}" | tr ' ' '#'  # '▇'
 	    printf "%*s]\r" "${j}"
@@ -151,49 +152,6 @@ listfiles() {
 	fi
 }
 
-skapa_lista() {
-
-	OLDIFS=$IFS
-	IFS=$(echo -en "\n\b")
-
-	# makes an array of directories
-	dirlist=$(find $1 -mindepth 1 -maxdepth 1 -type d |sort -u)
-
-
-	# bug exists because there is no check if its an sfv
-
-	gfint=0
-	ic=0
-	for directory in $dirlist;do
-
-		lsdir=$(ls $directory)
-
-		if [[ $2 == mp3 ]];then	
-			case $lsdir in
-			*.sfv | *.nfo | *.mp3 | *.m3u | *.* )
-				nylista[gfint]=${directory}
-				gfint=$((gfint+1))
-				;;
-			*)
-				incomplete[ic]=${directory}
-				ic=$((ic+1))
-				;;
-			esac
-		elif [[	$2 == movie ]];then
-			case $lsdir in			
-			*.sfv | *.nfo | *.rar )
-				nylista[gfint]=${directory}
-				gfint=$((gfint+1))
-				;;
-			*)
-				incomplete[ic]=${directory}
-				ic=$((ic+1))
-				;;
-			esac
-		fi
-	done
-	IFS=${OLDIFS}
-}
 
 runnable(){
 
@@ -207,7 +165,10 @@ runnable(){
 
 		sint=0 # success increment
 		fint=0 # failed increment
-		skapa_lista $1 $2
+		#. skapa_lista $1 $2
+		#source scratchpad.sh
+		#source test.sh
+		make_lists $1 $2
 		work_done=0
 		broken=false
 		el=$(tput el) # this fixes the fucking return carriage
@@ -224,7 +185,7 @@ runnable(){
 					else
 						# array of failed items
 						failed[fint]=$katalog
-						fint=$((fint+1))			
+						fint=$((fint+1))
 						work_done=$((work_done+1))
 						broken=true
 						printf '%s %s%s\n' "[ FAILED  ]" "$katalog" "$el"
@@ -237,13 +198,11 @@ runnable(){
 			#elif [[ $verbose == true ]] && [[ $broken == false ]] && [[ $fil == *.sfv ]];then
 			#	printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
 			#fi
-	
 			cols=$(tput cols)
 			draw_bar ${work_done} ${#nylista[@]} ${cols}
-
 		done
 		make_list_of_failed ${nylista[@]}
-	else 
+	else
 		helpmsg
 	fi
 	IFS=${OLDIFS}
