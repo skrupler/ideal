@@ -131,13 +131,17 @@ draw_bar() {
 
 	if [ $1 -eq $2 ];then
 
+		total_rls=$((${4}+${2}))
+
 		printf "\r[%*s" "${x}" | tr ' ' '#'  #'▇'
 		printf "%*s]"
+		printf "${SCOLOR}${total_rls} releases in directory $target.${CEND}\n"
+		printf "${SCOLOR}${4} where incomplete and excluded from scan.${CEND}\n"
 		printf "${SCOLOR}Operation completed ${1} scans.${CEND}\n"
 		printf "${FCOLOR}${fint} broken releases.${CEND}\n"
 		printf "${SCOLOR}${sint} intact releases.${CEND}\n"
 	else
-	i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
+		i=$((${1}*${x}/${2})) # work_done * window_columns / work_total
         j=$((${x}-i)) # window_column - (work_done*window_columns / work_total)
     	printf "\r[%*s" "${i}" | tr ' ' '#'  # '▇'
 	    printf "%*s]\r" "${j}"
@@ -165,11 +169,7 @@ runnable(){
 
 		sint=0 # success increment
 		fint=0 # failed increment
-		#. skapa_lista $1 $2
-		#source scratchpad.sh
-		#source test.sh
 		make_lists $1 $2
-		printf '%s\n' "After: ${#pass_forward[@]}"
 		work_done=0
 		broken=false
 		el=$(tput el) # this fixes the fucking return carriage
@@ -182,7 +182,9 @@ runnable(){
 						success[sint]=$katalog
 						sint=$((sint+1))
 						work_done=$((work_done+1))
-						printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
+						if [[ $verbose == true ]];then
+							printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
+						fi
 					else
 						# array of failed items
 						failed[fint]=$katalog
@@ -193,16 +195,10 @@ runnable(){
 					fi
 				fi
 			done
-			# DONT NEED THIS NO MORE
-			#if [[ $broken == true ]];then
-			#	printf '%s %s%s\n' "[ FAILED  ]" "$katalog" "$el"
-			#elif [[ $verbose == true ]] && [[ $broken == false ]] && [[ $fil == *.sfv ]];then
-			#	printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
-			#fi
 			cols=$(tput cols)
-			draw_bar ${work_done} ${#pass_forward[@]} ${cols}
+			draw_bar ${work_done} ${#pass_forward[@]} ${cols} ${#failed[@]}
 		done
-		make_list_of_failed ${nylista[@]}
+		make_list_of_failed ${pass_forward[@]} ${failed[@]}
 	else
 		helpmsg
 	fi

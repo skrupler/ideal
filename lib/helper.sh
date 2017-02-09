@@ -22,7 +22,7 @@ make_lists() {
 			local __mp3=false
 			local __rar=false
 			
-			if [[ $2 == mp3 ]];then
+			if [[ $2 == music ]];then
 
 				shopt -s nullglob extglob nocaseglob
 				files_found=("${directory}"/''*.@(sfv|nfo|m3u|mp3)'')
@@ -34,7 +34,7 @@ make_lists() {
 					if [ "${xy##*.}" = "m3u" ];then
 						if [[ $__m3u == true ]];then
 							printf '%s\n' "Already got a M3U file."
-							break
+							continue
 						else
 							#printf '%s\n' "M3U = TRUE"
 							__m3u=true
@@ -45,7 +45,7 @@ make_lists() {
 					if [ ${xy##*.} = "nfo" ];then
 						if [[ $__nfo == true ]];then
 							printf '%s\n' "Already got a NFO file."
-							break
+							continue
 						else
 							__nfo=true
 							#printf '%s\n' "NFO = TRUE"
@@ -56,7 +56,7 @@ make_lists() {
 					if [ "${xy##*.}" = "sfv" ];then
 						if [[ $__sfv == true ]];then
 							printf '%s\n' "Already got a SFV file."
-							break
+							continue
 						else
 							#printf '%s\n' "SFV = TRUE"
 							__sfv=true
@@ -67,7 +67,7 @@ make_lists() {
 					if [ "${xy##*.}" = "mp3" ];then
 						if [[ $__mp3 == true ]];then
 							printf '%s\n' "Already got a mp3 file."
-							break
+							continue
 						else
 							__mp3=true
 							#printf '%s\n' "MP3 = TRUE"
@@ -85,7 +85,7 @@ make_lists() {
 					printf '%s\t\n' "ERR: $directory"
 				fi
 	
-			elif [[ $2 == mov ]];then
+			elif [[ $2 == movie ]];then
 
 				shopt -s nullglob extglob nocaseglob
 				files_found=("$directory"/*.''@(sfv|nfo|rar)'')
@@ -139,8 +139,6 @@ make_lists() {
 				fi	
 			fi
 	done
-	printf '%s\n' "Before: ${#pass_forward[@]}"
-	#return ${pass_forward[@]}
 	IFS=${RESTORE_IFS}
 }
 shopt -u extglob
