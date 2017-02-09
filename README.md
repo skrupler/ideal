@@ -18,15 +18,15 @@ The default usage `./ideal.sh -t /path/to/target/ -r (music|movie)` does not tou
 
 	ideal.sh -t /path/to/target -w -m /tmp
 
-	~~-w		DANGER: Use with caution. Enables writable mode. Use with --move. ~~
-	~~-m		Directory to move broken releases into. Ignored unless -w is supplied.~~
-				If no argument passed to -m then directory ~/temp is assumed for moving the broken folders to.
-	-t			Target path to scan.
-	-v			Toggles verbose output. Prints successful sfv checks aswell.
-	-d			Defines folder depth from target path. ie -d 2 /path/to/podcast will search 2 levels down.
+	-w			DANGER: Use with caution. Enables (w)rite mode. Use with --move. 
+	-m			Directory to (m)ove broken releases into. Ignored unless -w is supplied.
+				If no argument passed then directory ~/broken is assumed for moving the broken folders to.
+	-t			(t)arget path to scan.
+	-v			Toggles (v)erbose output. Prints successful sfv checks aswell.
+	-d			Defines folder (d)epth from target path. ie -d 2 /path/to/podcast will search 2 levels down.
 	-r			(r)elease type ie: music or movie.
 
-	-h			Prints this message.
+	-h			Prints this (h)elp message.
 
 ```
 
@@ -41,12 +41,12 @@ Operation completed 40 scans.
 
 ### TODOs
 
-- [] show percentage completion in margin #progressbar
-- [] ~~add maxdepth param via cmdline~~
-- [] add archive possibility - aka save an archival log file aswell. archive.log or ideal.log
-- [] cleanup stats which is printed after a scan
-- [/] colored output
-- [/] cleanup printf
+- [ ] show percentage completion in margin #progressbar
+- [ ] add maxdepth param via cmdline
+- [ ] add archive possibility - aka save an archival log file aswell.
+- [ ] cleanup stats which is printed after a scan
+- [ ] colored output
+- [ ] cleanup printf
 
 - [x] fix bug where dirs with spaces bor
 - [x] write a failed rls log
