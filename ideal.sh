@@ -169,10 +169,11 @@ runnable(){
 		#source scratchpad.sh
 		#source test.sh
 		make_lists $1 $2
+		printf '%s\n' "After: ${#pass_forward[@]}"
 		work_done=0
 		broken=false
 		el=$(tput el) # this fixes the fucking return carriage
-		for katalog in "${nylista[@]}";do
+		for katalog in "${pass_forward[@]}";do
 			for fil in $(listfiles $katalog);do 
 				if [[ $fil == *.sfv ]];then # dubbelkontroll SO WHAT?
 					broken=false
@@ -199,7 +200,7 @@ runnable(){
 			#	printf '%s %s%s\n' "[ SUCCESS ]" "$katalog" "$el"
 			#fi
 			cols=$(tput cols)
-			draw_bar ${work_done} ${#nylista[@]} ${cols}
+			draw_bar ${work_done} ${#pass_forward[@]} ${cols}
 		done
 		make_list_of_failed ${nylista[@]}
 	else

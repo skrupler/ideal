@@ -14,6 +14,8 @@ make_lists() {
 
 	for directory in $directory_list;do
 
+			# I know this is ugly but it works
+
 			local __m3u=false
 			local __nfo=false
 			local __sfv=false
@@ -137,6 +139,8 @@ make_lists() {
 				fi	
 			fi
 	done
+	printf '%s\n' "Before: ${#pass_forward[@]}"
+	#return ${pass_forward[@]}
 	IFS=${RESTORE_IFS}
 }
 shopt -u extglob
