@@ -1,18 +1,16 @@
 # ideal.sh
-A bash wrapper for checking a directory tree of sub directories containing `.sfv` files and then calculate the checksum and blacklist those whom are deemed unfit. 
+A wrapper written in bash for checking a directory tree of sub directories containing `.sfv` files and then calculate the checksum and blacklist those whom are deemed unfit. 
 
 ## About
-This is a wrapper script in bash which checks folders for sfv and then scans them. Those
+Ideal is a swedish word for something if not perfection, near perfection. This is a wrapper script in bash which checks folders for sfv files and then calculates them. Those
 who fail will be logged to a file (default: `failed.log`). Ideal is swedish and is a word something near
-perfection - which you want your releases to be. It makes use of cksfv for the actual sfv calculations.
-
+perfection - which you want your releases to be. 
 ### Dependencies
 
-* ~~bc~~
 * cksfv
 
 ### Usage
-The default usage `./ideal.sh -t /path/to/target/` does not touch anything except writing a `failed.log` to `~/` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
+The default usage `./ideal.sh -t /path/to/target/ -r (music|movie)` does not touch anything except writing a `failed.log` to `~/` once `cksfv` is done calculating the checksums. The `failed.log` will be zeroed upon each new scan (read script invocation).
 
 `$ ideal.sh -t /path/to/directory -w -m`
 
@@ -20,12 +18,13 @@ The default usage `./ideal.sh -t /path/to/target/` does not touch anything excep
 
 	ideal.sh -t /path/to/target -w -m /tmp
 
-	-w			DANGER: Use with caution. Enables writable mode. Use with --move. 
-	-m			Directory to move broken releases into. Ignored unless -w is supplied.
+	~~-w		DANGER: Use with caution. Enables writable mode. Use with --move. ~~
+	~~-m		Directory to move broken releases into. Ignored unless -w is supplied.~~
 				If no argument passed to -m then directory ~/temp is assumed for moving the broken folders to.
 	-t			Target path to scan.
 	-v			Toggles verbose output. Prints successful sfv checks aswell.
 	-d			Defines folder depth from target path. ie -d 2 /path/to/podcast will search 2 levels down.
+	-r			(r)elease type ie: music or movie.
 
 	-h			Prints this message.
 
@@ -42,10 +41,10 @@ Operation completed 40 scans.
 
 ### TODOs
 
-
 * [] show percentage completion in margin #progressbar
-* [] add maxdepth param via cmdline
+* [] ~~add maxdepth param via cmdline~~
 * [] add archive possibility - aka save an archival log file aswell. archive.log or ideal.log
+* [] cleanup stats which is printed after a scan
 * [/] colored output
 * [/] cleanup printf
 
