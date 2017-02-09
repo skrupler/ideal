@@ -41,15 +41,15 @@ Operation completed 40 scans.
 
 ### TODOs
 
-* [] show percentage completion in margin #progressbar
-* [] ~~add maxdepth param via cmdline~~
-* [] add archive possibility - aka save an archival log file aswell. archive.log or ideal.log
-* [] cleanup stats which is printed after a scan
-* [/] colored output
-* [/] cleanup printf
+- [] show percentage completion in margin #progressbar
+- [] ~~add maxdepth param via cmdline~~
+- [] add archive possibility - aka save an archival log file aswell. archive.log or ideal.log
+- [] cleanup stats which is printed after a scan
+- [/] colored output
+- [/] cleanup printf
 
-* [x] fix bug where dirs with spaces bor
-* [x] write a failed rls log
-* [x] proper args handling
-* [x] scrolling output yet with progressbar working(?)
-* [x] eliminate bc, awk perhaps?
+- [x] fix bug where dirs with spaces bor
+- [x] write a failed rls log
+- [x] proper args handling
+- [x] scrolling output yet with progressbar working(?)
+- [x] eliminate bc, awk perhaps?
