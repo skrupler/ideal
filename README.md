@@ -33,7 +33,7 @@ The default usage `./ideal.sh -t /path/to/target/ -r (music|movie)` does not tou
 ### Example output
 ```bash
 $ ideal.sh -t /mnt/music/pop/2003
-[▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                                       ]
+[##################################################                                                      ]
 Operation completed 40 scans.
 5 broken releases.
 35 intact releases.
@@ -47,7 +47,6 @@ Operation completed 40 scans.
 - [ ] cleanup stats which is printed after a scan
 - [ ] colored output
 - [ ] cleanup printf
-
 - [x] fix bug where dirs with spaces bor
 - [x] write a failed rls log
 - [x] proper args handling
