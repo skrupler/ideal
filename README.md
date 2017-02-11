@@ -39,6 +39,13 @@ Operation completed 40 scans.
 35 intact releases.
 ```
 
+### Anti-features
+So this script assumes some things, for example does it assume that you store files in 
+a flat style - ie: `/path/to/$(movie_storage)/$(movie)` or for music `/path/to/$(music_storage)/$(album)`.
+
+* file storage layout
+* movie/music directories containing sub folders like DISK1 and DISK2 is currently being blacklisted aswell.
+
 ### TODOs
 
 - [ ] show percentage completion in margin #progressbar

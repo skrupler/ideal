@@ -16,32 +16,35 @@ source lib/helper.sh
 menu(){
 
 	target=""
-	move="~/"
-	write=false
+	__move=""
+	__write=false
 	verbose=false
 
-	while getopts ":t:r:mwvh" opt; do
+	while getopts ":t:r:m:wivh" opt; do
 		case $opt in
 		t)
-			target=$OPTARG
+			target="$OPTARG"
 			;;
 		r)
-			rlstype=$OPTARG
+			rlstype="$OPTARG"
 			;;
 		m)
-			if [[ -d $OPTARG ]] && [[ ! -z $OPTARG ]];then
-				move=$OPTARG
-			else
-				move=$move
-			fi
+			__move="$OPTARG"
 			;;
 		w)
 			if $OPT;then
-				write=true
+				__write=true
+				printf '%s\n' "Write mode: $__write"
 			else
-				write=false
+				__write=false
 			fi
-			printf "Write mode: $write\n"
+			;;
+		i)
+			if ! [[ $OPT ]];then
+				__interactive=true
+			elif [[ $OPT ]];then
+				__interactive=false
+			fi
 			;;
 		h)
 			helpmsg
@@ -72,13 +75,13 @@ helpmsg(){
 	# just a simple help screen
 	# not valid anymore anyways
 
-	echo -e "\n"
 	echo -e "\tideal.sh\n"
 	echo -e "\tUsage:"
 	echo -e "\t$0 -t /path/to/target -v\n"
 
 	echo -e "\t-m" "\t"		"Directory to move broken releases into."
 	echo -e "\t-w" "\t" 	"Writable mode, default doesnt touch anything."
+	echo -e "\t-i" "\t"		"When flag is passed interactive mode will be disabled."
 	echo -e "\t-v" "\t"		"Toggles verbose output aka also printing successful."
 	echo -e "\t-r" "\t"		"Specify type of release. ie: mp3 or movie."
 	echo -e "\t-h" "\t"		"Prints this message.\n"
@@ -100,6 +103,8 @@ make_list_of_failed(){
 			rm $LOGPATH
 			touch $LOGPATH
 		fi
+		
+		printf '%s\n' "--------------------------------[ CORRUPT ]--------------------------------"
 		for BROKEN in ${failed[@]};do
 			if [ -d $BROKEN ];then
 				echo -en "$BROKEN" "\n" >> $LOGPATH
@@ -109,6 +114,7 @@ make_list_of_failed(){
 			fi
 		done
 
+		printf '%s\n' "-------------------------------[ INCOMPLETE ]------------------------------"
 		for INCOMPLETE in ${incomplete[@]};do
 			if [ -d $INCOMPLETE ];then
 				echo -en "$INCOMPLETE" "\n" >> $LOGPATH
@@ -156,6 +162,88 @@ listfiles() {
 	fi
 }
 
+
+create_temp_dir(){
+
+	# takes $1 param as output directory
+	# creates two sub dirs within that.
+
+	printf '%s\n' "$1"
+
+	if [[ ! -d "$1" ]];then
+		mkdir -p "$1"
+	fi
+
+	if [[ ! -z "$1" ]] && [[ -d $1 ]];then
+		output="$1"
+	else
+		printf '%s\n' "Something wrong with output directory. Quitting."
+		exit 1
+	fi
+
+	if [[ ! -z $2 ]];then
+		new="$output/$2"
+	else
+		printf '%s\n' "Seems to be missing an argument. Quitting."
+		exit 1
+	fi
+
+
+	if [[ ! -d "$new" ]];then
+		printf '%s\n' "$new does not exist, creating it."
+		mkdir -p "$new"
+	fi
+	
+
+}
+
+move_broken(){
+
+	OLDIFS=$IFS
+	IFS=$(echo -en "\n\b")
+
+
+	#mv_opt="-r"
+
+	#if [[ "$3" == true ]];then
+	#	mv_opt="-ri"
+	#elif [[ "$3" == false ]];then
+	#	mv_opt="-r"
+	#fi
+
+	# for all the corrupt releases
+	if [[ ${#failed[@]} == 0 ]];then
+		printf '%s\n' "broken rls: ${#failed[@]}"
+	else
+		for crpt in "${failed[@]}"; do	
+			if [[ -d  "${crpt}" ]];then
+				printf '%s\n' "Moved $crpt to $__move/broken/"
+				mv "$crpt" "$__move/broken/"
+			else
+				printf '%s\n' "Failed to remove: $crpt"
+				printf '%s\n' "Did the folder move?"
+			fi
+		done
+	fi
+
+	# for all the incomplete releases
+	if [[ ${#incomplete[@]} == 0 ]];then
+		printf '%s\n' "incomplete rls: ${#incomplete[@]}"	
+	else
+		for inco in "${incomplete[@]}"; do	
+			if [[ -d  "${inco}" ]];then
+				printf '%s%s\n' "Moved $inco to $__move/incomplete"
+				mv "$inco" "$__move/incomplete/"
+			else
+				printf '%s\n' "Failed to remove: $inco"
+				printf '%s\n' "Did the folder move?"
+			fi
+		done
+	fi
+
+
+	IFS=${OLDIFS}
+}
 
 runnable(){
 
@@ -207,3 +295,18 @@ runnable(){
 
 menu "$@"
 runnable "$target" "$rlstype"
+if [[ ! -z "$__move" ]] && [[ "$__write" == true ]];then
+	printf '%s\n' "BEFORE $__move"
+
+	if [[ ! ${#broken[@]} == 0 ]];then
+		create_temp_dir "$__move" "broken"
+	fi
+
+	if [[ ! ${#incomplete[@]} == 0 ]];then
+		create_temp_dir "$__move" "incomplete"
+	fi
+
+	move_broken "${failed[@]}" "${incomplete[@]}" "$__move"
+else
+	printf '%s\n' "Requirements not met."
+fi

@@ -33,7 +33,7 @@ make_lists() {
 					# m3u
 					if [ "${xy##*.}" = "m3u" ];then
 						if [[ $__m3u == true ]];then
-							printf '%s\n' "Already got a M3U file."
+							#printf '%s\n' "Already got a M3U file."
 							continue
 						else
 							#printf '%s\n' "M3U = TRUE"
@@ -44,7 +44,7 @@ make_lists() {
 					# nfo
 					if [ ${xy##*.} = "nfo" ];then
 						if [[ $__nfo == true ]];then
-							printf '%s\n' "Already got a NFO file."
+							#printf '%s\n' "Already got a NFO file."
 							continue
 						else
 							__nfo=true
@@ -55,7 +55,7 @@ make_lists() {
 					# sfv
 					if [ "${xy##*.}" = "sfv" ];then
 						if [[ $__sfv == true ]];then
-							printf '%s\n' "Already got a SFV file."
+							#printf '%s\n' "Already got a SFV file."
 							continue
 						else
 							#printf '%s\n' "SFV = TRUE"
@@ -66,7 +66,7 @@ make_lists() {
 					# mp3
 					if [ "${xy##*.}" = "mp3" ];then
 						if [[ $__mp3 == true ]];then
-							printf '%s\n' "Already got a mp3 file."
+							#printf '%s\n' "Already got a mp3 file."
 							continue
 						else
 							__mp3=true
@@ -90,11 +90,6 @@ make_lists() {
 				shopt -s nullglob extglob nocaseglob
 				files_found=("$directory"/*.''@(sfv|nfo|rar)'')
 				shopt -u nullglob extglob nocaseglob
-
-				#for a in $directory_list;do
-				#	printf '%s\n' "$a"
-				#done
-
 
 				for xy in "${files_found[@]}";do
 
